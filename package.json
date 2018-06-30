@@ -1,0 +1,24 @@
+{
+  "name": "evennode",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "basic-auth": "^1.0.4",
+    "bcryptjs": "^2.3.0",
+    "body-parser": "^1.18.3",
+    "express": "^4.14.0",
+    "gridfs-stream": "^1.1.1",
+    "jsonwebtoken": "^7.1.9",
+    "mongoose": "^4.6.0",
+    "morgan": "^1.7.0",
+    "nodemailer": "^2.6.0",
+    "randomstring": "^1.1.5",
+    "youtube-search": "^1.1.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
