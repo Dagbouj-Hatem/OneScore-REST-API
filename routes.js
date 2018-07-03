@@ -217,7 +217,8 @@ var mongoose = require('mongoose');
 var gridfs = require('gridfs-stream');
 var fs = require('fs');
 //mongoose.connect('mongodb://localhost:27017/onescore', { useMongoClient: true });
-mongoose.connect('mongodb://2fe367726c5d2bac361bf48ef4e8f7b6:webmaster123@6a.mongo.evennode.com:27017,6b.mongo.evennode.com:27017/2fe367726c5d2bac361bf48ef4e8f7b6?replicaSet=eu-6' , { useMongoClient: true });
+//mongoose.connect('mongodb://2fe367726c5d2bac361bf48ef4e8f7b6:webmaster123@6a.mongo.evennode.com:27017,6b.mongo.evennode.com:27017/2fe367726c5d2bac361bf48ef4e8f7b6?replicaSet=eu-6' , { useMongoClient: true });
+mongoose.connect('mongodb://6cc064a3650fdff1771e4c99f684a70b:onscore123@6a.mongo.evennode.com:27017,6b.mongo.evennode.com:27017/6cc064a3650fdff1771e4c99f684a70b?replicaSet=eu-6' , { useMongoClient: true });
 
 mongoose.Promise = global.Promise;
 gridfs.mongo = mongoose.mongo;
