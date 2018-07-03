@@ -230,7 +230,7 @@ connection.once('open', function callback () {
 	// Upload a file from loca file-system to MongoDB
 	router.post('/api/file/upload/:file', (req, res) => {
 		
-		var filename = 'cap.PNG';
+		var filename = req.params.file;
 		
         var writestream = fs.createWriteStream({ filename: filename });
         fs.createReadStream(__dirname + "/uploads/" + filename).pipe(writestream);

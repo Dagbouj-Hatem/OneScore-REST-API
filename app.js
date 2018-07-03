@@ -15,7 +15,7 @@ const router 	   = express.Router();
 const port 	   = process.env.PORT || 8080;
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '5mb'  }));
 app.use(logger('dev'));
 
 require('./routes')(router);
