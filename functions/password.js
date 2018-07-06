@@ -116,7 +116,9 @@ exports.resetPasswordFinish = (email, token, password) =>
 			const seconds = Math.floor(diff / 1000);
 			console.log(`Seconds : ${seconds}`);
 
-			if (seconds < 600) { return user; } else { reject({ status: 401, message: 'Time Out ! Try again' }); } }) .then(user => {
+			if (seconds < 600) { return user; }
+		    else { reject({ status: 401, message: 'Time Out ! Try again .' }); } })
+		    .then(user => {
 
 			if (bcrypt.compareSync(token, user.temp_password)) {
 

@@ -15,7 +15,7 @@ exports.registerUser = (name, email, password) =>
 			name: name,
 			email: email,
 			hashed_password: hash,
-			balance: '0.00',
+			account_type: false ,
 			created_at: new Date()
 		});
 

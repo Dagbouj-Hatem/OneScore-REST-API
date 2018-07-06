@@ -10,9 +10,19 @@ const password = require('./functions/password');
 const config = require('./config/config.json');
 // added lib
 const search = require('youtube-search');
+
 const file =  require('./functions/file');
-
-
+//-----------------------------------------------------
+// file storage add 
+const multer  = require('multer');
+// Create a storage object with a given configuration
+const storage = require('multer-gridfs-storage')({
+   url: 'mongodb://6cc064a3650fdff1771e4c99f684a70b:onscore123@6a.mongo.evennode.com:27017,6b.mongo.evennode.com:27017/6cc064a3650fdff1771e4c99f684a70b?replicaSet=eu-6'
+});
+// Set multer storage engine to the newly created object
+const upload = multer({ storage: storage });
+// Upload your files as usual
+const sUpload = upload.single('avatar');
 
 module.exports = router => {
 /*
@@ -194,7 +204,9 @@ module.exports = router => {
 
 		var opts = {
 		  maxResults: 10,
-		  key: 'AIzaSyC4do4UjwWffbQgz5h4WbbqfeGsYk-0eWE'
+		  key: 'AIzaSyC4do4UjwWffbQgz5h4WbbqfeGsYk-0eWE',
+		  order:'viewCount',
+		  type:'video'
 		};
 
 		opts.maxResults= max_Result_number;
@@ -205,7 +217,8 @@ module.exports = router => {
 		  	//return console.log(err);
 		  	res.status(400).json({ message: 'Invalid Request !' , err : err.message});
 		  }  
-		  	res.status(200).json(results);
+		  	//console.log(results);
+		  	res.status(200).json({ message: results });
 		});
 
 	});
@@ -213,6 +226,21 @@ module.exports = router => {
 	//----------------------------------------------------------------------------
 	//		Music files API REST with node js 
 	//----------------------------------------------------------------------------
+
+	router.post('/profile/', sUpload, (req, res, next) => { 
+ 
+
+	});
+
+
+
+
+
+
+
+
+
+
 var mongoose = require('mongoose');
 var gridfs = require('gridfs-stream');
 var fs = require('fs');
@@ -244,7 +272,7 @@ connection.once('open', function callback () {
    	  router.get('/api/file/download', (req, res) => {
         // Check file exist on MongoDB
 		
-		var filename = req.query.filename;
+		var filename = req.body.filename;
 		
         gfs.exist({ filename: filename }, (err, file) => {
             if (err || !file) {

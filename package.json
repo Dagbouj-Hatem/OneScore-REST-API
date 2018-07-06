@@ -12,6 +12,7 @@
     "jsonwebtoken": "^7.1.9",
     "mongoose": "^4.6.0",
     "morgan": "^1.7.0",
+    "multer-gridfs-storage": "^3.0.1",
     "nodemailer": "^2.6.0",
     "randomstring": "^1.1.5",
     "youtube-search": "^1.1.1"
