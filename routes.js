@@ -4,25 +4,15 @@ const auth = require('basic-auth');
 const jwt = require('jsonwebtoken');
 
 const register = require('./functions/register');
+const contact = require('./functions/contact');
+const register_transcriber = require('./functions/register_transcriber');
 const login = require('./functions/login');
 const profile = require('./functions/profile');
 const password = require('./functions/password');
+const order = require('./functions/order');
 const config = require('./config/config.json');
 // added lib
 const search = require('youtube-search');
-
-const file =  require('./functions/file');
-//-----------------------------------------------------
-// file storage add 
-const multer  = require('multer');
-// Create a storage object with a given configuration
-const storage = require('multer-gridfs-storage')({
-   url: 'mongodb://6cc064a3650fdff1771e4c99f684a70b:onscore123@6a.mongo.evennode.com:27017,6b.mongo.evennode.com:27017/6cc064a3650fdff1771e4c99f684a70b?replicaSet=eu-6'
-});
-// Set multer storage engine to the newly created object
-const upload = multer({ storage: storage });
-// Upload your files as usual
-const sUpload = upload.single('avatar');
 
 module.exports = router => {
 /*
@@ -34,7 +24,7 @@ module.exports = router => {
 *	Auth route : return the result of auth  user 
 *   access URL : http://localhost:8080/api/v1/authenticate
 */
-	router.post('/authenticate', (req, res) => {
+	router.post('/auth', (req, res) => {
 
 		const credentials = auth(req);
 
@@ -50,7 +40,7 @@ module.exports = router => {
 
 				const token = jwt.sign(result, config.secret, { expiresIn: 1440 });
 
-				res.status(result.status).json({ message: result.message, token: token });
+				res.status(result.status).json({ message: result.message, account_type : result.account_type , token: token });
 
 			})
 
@@ -62,24 +52,27 @@ module.exports = router => {
     exemple of input : 
     
 	{
-		"name":"hatem" , 
-		"email":"mail2",
-		"password":"pass2"
+		"name":"Hatem" , 
+		"last_name": "Dagbouj",
+		"email":"dagboujhatem2017@gmail.com",
+		"password":"password"
 	}
 */
 	router.post('/users', (req, res) => {
 
 		const name = req.body.name;
+		const last_name= req.body.last_name;
 		const email = req.body.email;
 		const password = req.body.password;
 
-		if (!name || !email || !password || !name.trim() || !email.trim() || !password.trim()) {
+
+		if (!name || !email || !password || !name.trim() || !email.trim() || !password.trim() || !last_name || !last_name.trim()) {
 
 			res.status(400).json({message: 'Invalid Request 1 !'+ req.body.email +" :"+ req.query});
 
 		} else {
 
-			register.registerUser(name, email, password)
+			register.registerUser(name, last_name, email, password)
 
 			.then(result => {
 
@@ -108,7 +101,7 @@ module.exports = router => {
 			res.status(401).json({ message: 'Invalid Token !' });
 		}
 	});
-// change password ....
+// change user  ....
 // access URL : http://localhost:8080/api/v1/users/dagboujhatem2017@gmail.com
 	router.put('/users/:id', (req,res) => {
 
@@ -160,7 +153,33 @@ module.exports = router => {
 			.catch(err => res.status(err.status).json({ message: err.message }));
 		}
 	});
+	// contact form 
+	router.post('/contact/:id', (req,res) => {
 
+		const email = req.params.id; 
+		const subject = req.body.subject;
+		const message = req.body.message; 
+
+		if (checkToken(req)) {
+
+				if(!subject || ! message || !subject.trim() || !message.trim())
+				{
+					res.status(400).json({ message: 'Invalid Request !' });
+				}
+				else
+				{
+					contact.contact(email, subject , message)
+					.then(result => res.status(result.status).json({ message: result.message }))
+					.catch(err => res.status(err.status).json({ message: err.message }));
+
+				}
+		} else {
+
+			res.status(401).json({ message: 'Invalid Token !' });
+		}
+	});
+
+	// check token  method 
 	function checkToken(req) {
 
 		const token = req.headers['x-access-token'];
@@ -184,10 +203,49 @@ module.exports = router => {
 		}
 	}
 
+	//----------------------------------------------------------------------------
+	//		Transcriber  API REST with node js 
+	//----------------------------------------------------------------------------
 
+	
+	// add user to transcriber users 
+	/* 
+	{
+		"date_of_birth":"Dagbouj Hatem" , 
+		"title_string":"dagboujhatem@gmail.com",
+		"university":"password",
+		"about" : "university"
+	}
+	*/
+	router.post('/transcriber/:id', (req,res) => {
 
+		if (checkToken(req)) {
+ 
+			const date_of_birth 	= req.body.date_of_birth;
+			const title_string 		= req.body.title_string; 
+			const university 		= req.body.university;
+			const about 			= req.body.about;
 
+			if (!date_of_birth || !title_string || !university || !about ||
+				!date_of_birth.trim() || !title_string.trim() || 
+				!university.trim() || !about.trim() ) {
+			
+				res.status(400).json({ message: 'Invalid Request !' });
 
+			} else {
+
+				register_transcriber.register(req.params.id, date_of_birth , title_string , university , about )
+
+				.then(result => res.status(result.status).json({ message: result.message }))
+
+				.catch(err => res.status(err.status).json({ message: err.message }));
+
+			}
+		} else {
+
+			res.status(401).json({ message: 'Invalid Token !' });
+		}
+	});
 
 	//----------------------------------------------------------------------------
 	//		YouTube API REST with node js 
@@ -204,7 +262,7 @@ module.exports = router => {
 
 		var opts = {
 		  maxResults: 10,
-		  key: 'AIzaSyC4do4UjwWffbQgz5h4WbbqfeGsYk-0eWE',
+		  key: 'AIzaSyBQAGnQaE-Niq59-we3cwyYevPSaAwOne0',
 		  order:'viewCount',
 		  type:'video'
 		};
@@ -214,11 +272,11 @@ module.exports = router => {
 		search(keyword, opts, function(err, results) {
 		  if(err)
 		  {
-		  	//return console.log(err);
+		  	 console.log(err);
 		  	res.status(400).json({ message: 'Invalid Request !' , err : err.message});
 		  }  
 		  	//console.log(results);
-		  	res.status(200).json({ message: results });
+		  	res.status(200).json(results);
 		});
 
 	});
@@ -226,108 +284,36 @@ module.exports = router => {
 	//----------------------------------------------------------------------------
 	//		Music files API REST with node js 
 	//----------------------------------------------------------------------------
-
-	router.post('/profile/', sUpload, (req, res, next) => { 
- 
-
-	});
-
-
-
-
-
-
-
-
-
-
-var mongoose = require('mongoose');
-var gridfs = require('gridfs-stream');
-var fs = require('fs');
-//mongoose.connect('mongodb://localhost:27017/onescore', { useMongoClient: true });
-//mongoose.connect('mongodb://2fe367726c5d2bac361bf48ef4e8f7b6:webmaster123@6a.mongo.evennode.com:27017,6b.mongo.evennode.com:27017/2fe367726c5d2bac361bf48ef4e8f7b6?replicaSet=eu-6' , { useMongoClient: true });
-mongoose.connect('mongodb://6cc064a3650fdff1771e4c99f684a70b:onscore123@6a.mongo.evennode.com:27017,6b.mongo.evennode.com:27017/6cc064a3650fdff1771e4c99f684a70b?replicaSet=eu-6' , { useMongoClient: true });
-
-mongoose.Promise = global.Promise;
-gridfs.mongo = mongoose.mongo;
- 
-var connection = mongoose.connection;
-connection.once('open', function callback () {
-  // begin  conx
-
-	// Upload a file from loca file-system to MongoDB
-	router.post('/api/file/upload/:file', (req, res) => {
-		
-		var filename = req.params.file;
-		
-        var writestream = fs.createWriteStream({ filename: filename });
-        fs.createReadStream(__dirname + "/uploads/" + filename).pipe(writestream);
-        writestream.on('close', (file) => {
-            res.send('Stored File: ' + file.filename);
-        });
-    });
-
-   	// Download File
-
-   	  router.get('/api/file/download', (req, res) => {
-        // Check file exist on MongoDB
-		
-		var filename = req.body.filename;
-		
-        gfs.exist({ filename: filename }, (err, file) => {
-            if (err || !file) {
-                res.status(404).send('File Not Found');
-				return
-            } 
-			
-			var readstream = gfs.createReadStream({ filename: filename });
-			readstream.pipe(res);            
-        });
-    });
     
+	router.post('/users/:id/order', (req,res) => {
 
-    // Delete a file from MongoDB
-    router.get('/api/file/delete', (req, res) => {
-		
-		var filename = req.query.filename;
-		
-		gfs.exist({ filename: filename }, (err, file) => {
-			if (err || !file) {
-				res.status(404).send('File Not Found');
-				return;
+			const id 	= req.body.id;
+			const link 	= req.body.link;
+			const title 	= req.body.title;
+			const description 	= req.body.description;
+			const thumbnails 	= req.body.thumbnails;
+
+			if(!id || !id.trim() || !link || !link.trim() || !title || ! title.trim()
+				|| !description || !description.trim() || !thumbnails || !thumbnails.trim())
+			{
+				res.status(400).json({ message: 'Invalid Request !' });
+
+			}else{
+			 	order.order(id ,link,title,description,thumbnails)
+				.then(result => res.status(result.status).json({ message: result.message }))
+				.catch(err => res.status(err.status).json({ message: err.message }));
 			}
-			
-			gfs.remove({ filename: filename }, (err) => {
-				if (err) res.status(500).send(err);
-				res.send('File Deleted');
-			});
-		});
-    });	
-
-    // get Meta Information
-
-    router.get('/api/file/meta', (req, res) => {
 		
-		var filename = req.query.filename;
-		
-		gfs.exist({ filename: filename }, (err, file) => {
-			if (err || !file) {
-				res.send('File Not Found');
-				return;
-			}
-			
-			gfs.files.find({ filename: filename }).toArray( (err, files) => {
-				if (err) res.send(err);
-				res.json(files);
-			});
-		});
 	});
+    router.get('/user/:id/order/delete/:par', (req,res) => {
 
+		const email = req.params.id; 
+		const par = req.params.par;  
 
-
-
-// end conx 
-});
+		order.delete(email,par)
+			.then(result => res.status(result.status).json({ message: result.message }))
+			.catch(err => res.status(err.status).json({ message: err.message }));
+	});
 
 
 }

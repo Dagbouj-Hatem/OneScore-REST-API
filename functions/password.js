@@ -74,13 +74,13 @@ exports.resetPasswordInit = email =>
 
 from: `"${config.name}" <${config.email}>`,
 to: email,  
-subject: 'Reset Password Request ', 
+subject: 'Reset Password Request', 
 html: `<pre>Hello ${user.name},
 
-     Your reset password token is <b>${random}</b>.The token is valid for only 10 minutes.
+Your reset password token is <b>${random}</b>. The token is valid for only 10 minutes.
 
-Thanks,
-OneScore.</pre>`
+Best,
+OneScore Team.</pre>`
 
 			};
 
