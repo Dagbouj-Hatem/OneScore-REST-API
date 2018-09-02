@@ -24,25 +24,46 @@ exports.contact = (email, subject , message ) =>
 		})
 
 		.then(user => { 
-// sent mail to user  
+// sent mail to onescore team  
 
 const transporter = nodemailer.createTransport(`smtps://${config.email}:${config.password}@smtp.gmail.com`);
+
+const mailOptions1 = {
+
+from: `"${config.name}" <${config.email}>`,
+to: email,  
+subject: 'OneScore support' , 
+html: `<pre>Hello ${user.name},
+
+Thank you for contacting us, we'll reply soon to your inquiry.
+
+Best,
+OneScore Team.</pre>`
+
+};
+	return transporter.sendMail(mailOptions1);
+})	
+.then(() => { 
+// sent mail to user   
+
+const transporter = nodemailer.createTransport(`smtps://${config.email}:${config.password}@smtp.gmail.com`);
+
 
 const mailOptions = {
 
 from: `"${config.name}" <${config.email}>`,
-to: email,  
+to: 'info.onescore@gmail.com',  
 subject: subject , 
-html: `<pre>${ message }</pre>`
+html: `<pre>${ message }</pre><br><br>Message from :<i>${email}</i>`
 
 };
 
 	return transporter.sendMail(mailOptions);
 
-})
+})	
 //*************************************************************************
 //*************************************************************************
-		.then(user => resolve({ status: 200, message: 'You have successfully registered !' }))
+		.then(() => resolve({ status: 200, message: 'Thank you for getting in touch' }))
 
 		.catch(err => reject({ status: 500, message: 'Internal Server Error !' }));
 

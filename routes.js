@@ -160,8 +160,6 @@ module.exports = router => {
 		const subject = req.body.subject;
 		const message = req.body.message; 
 
-		if (checkToken(req)) {
-
 				if(!subject || ! message || !subject.trim() || !message.trim())
 				{
 					res.status(400).json({ message: 'Invalid Request !' });
@@ -171,12 +169,8 @@ module.exports = router => {
 					contact.contact(email, subject , message)
 					.then(result => res.status(result.status).json({ message: result.message }))
 					.catch(err => res.status(err.status).json({ message: err.message }));
-
 				}
-		} else {
-
-			res.status(401).json({ message: 'Invalid Token !' });
-		}
+		 
 	});
 
 	// check token  method 
@@ -284,8 +278,16 @@ module.exports = router => {
 	//----------------------------------------------------------------------------
 	//		Music files API REST with node js 
 	//----------------------------------------------------------------------------
-    
+    /*{
+    	"id" :"id",
+    	"link":"link",
+    	"title":"title",
+    	"description":"description",
+    	"thumbnails":"thumbnails"
+    }*/
 	router.post('/users/:id/order', (req,res) => {
+
+			const email =  req.params.id; 
 
 			const id 	= req.body.id;
 			const link 	= req.body.link;
@@ -299,13 +301,13 @@ module.exports = router => {
 				res.status(400).json({ message: 'Invalid Request !' });
 
 			}else{
-			 	order.order(id ,link,title,description,thumbnails)
+			 	order.order(id ,link,title,description,thumbnails,email)
 				.then(result => res.status(result.status).json({ message: result.message }))
 				.catch(err => res.status(err.status).json({ message: err.message }));
 			}
 		
 	});
-    router.get('/user/:id/order/delete/:par', (req,res) => {
+    router.get('/users/:id/order/delete/:par', (req,res) => {
 
 		const email = req.params.id; 
 		const par = req.params.par;  
@@ -314,6 +316,27 @@ module.exports = router => {
 			.then(result => res.status(result.status).json({ message: result.message }))
 			.catch(err => res.status(err.status).json({ message: err.message }));
 	});
+    router.post('/users/:id/order/accept/', (req,res) => {
 
+		const email = req.params.id;  
+
+		const id 	= req.body.id;
+		const link 	= req.body.link;
+		const title 	= req.body.title;
+		const description 	= req.body.description;
+		const thumbnails 	= req.body.thumbnails;
+
+		if(!id || !id.trim() || !link || !link.trim() || !title || ! title.trim()
+			|| !description || !description.trim() || !thumbnails || !thumbnails.trim())
+		{
+			res.status(400).json({ message: 'Invalid Request !' });
+
+		}else{
+
+		order.accept(email,id,link,title,description,thumbnails)
+			.then(result => res.status(result.status).json({ message: result.message }))
+			.catch(err => res.status(err.status).json({ message: err.message }));
+		}
+	});
 
 }

@@ -5,7 +5,7 @@ const user = require('../models/user');
 const nodemailer = require('nodemailer'); 
 const config = require('../config/config.json');
 
-exports.order = (id ,link,title,description,thumbnails) => 
+exports.order = (id ,link,title,description,thumbnails, email) => 
 
 
 
@@ -25,29 +25,20 @@ exports.order = (id ,link,title,description,thumbnails) =>
 		},
 	    {
 		    multi: true //means update all matching docs
-		})
-/*
+		}).exec();
+
+		user.find({ email: email })
+
 		.then(users => {
-
-			let user = users[0];
-
-			// update user to transcriber  
-				user.set(); 
-				user.set("date_of_birth", date_of_birth);
-				user.set("title_string" , title_string); 
-				user.set("university"	, university);
-				user.set("about"		, about);
-			// send mail to transcriber 
-
+			const  user = users[0]; 
 			// return statements
-			return user.save();
-
-			  
-		})*/
+			return user;
+		})
+ 
 //**************************************************************************
 //**************************************************************************
 // sent mail to user 
-/*.then(() => {
+.then((user) => {
 
 const transporter = nodemailer.createTransport(`smtps://${config.email}:${config.password}@smtp.gmail.com`);
 
@@ -67,23 +58,50 @@ OneScore Team.</pre>`
 
 	return transporter.sendMail(mailOptions);
 
-})*/
+})
 //*************************************************************************
 //*************************************************************************
-		.then(user => resolve({ status: 200, message: 'saved .... !' }))
+		.then(user => resolve({ status: 200, message: 'Order request saved successfully , check mail for more informations' }))
 
 		.catch(err => reject({ status: 500, message: 'Internal Server Error !' }));
 
 	});
-
-
 
 // delete order 
 exports.delete = (email , id ) => 
 
 	new Promise((resolve, reject) => {
 
-		user.update({ email: email }, { $pull: { orders : { _id : id } } }, { safe: true }) 
+		user.update({ email: email }, { $pull: { order : { id : id } } }, { safe: true }) 
+
+		.then(user => resolve({ status: 200, message: 'delete successfully  !' }))
+
+		.catch(err => reject({ status: 500, message: 'Internal Server Error !' }));
+
+});
+
+// accept order 
+exports.accept = (email , id ,link,title,description,thumbnails) => 
+
+	new Promise((resolve, reject) => {
+		// add to score
+		user.update({ email : email  },
+		{
+		 $push : {
+		    score :  { 
+		            "id" : id,
+				    "link" : link,
+				    "title" : title,
+				    "description" : description,
+				    "thumbnails" : thumbnails
+		           } //inserted data is the object to be inserted 
+		  }
+		},
+	    {
+		    multi: false //means update all matching docs
+		}).exec();
+		// delete from order 
+		user.update({ email: email }, { $pull: { order : { id : id } } }, { safe: true })
 
 		.then(user => resolve({ status: 200, message: 'delete successfully  !' }))
 

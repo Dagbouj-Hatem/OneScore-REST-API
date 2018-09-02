@@ -34,6 +34,13 @@ const userSchema = mongoose.Schema({
     description : String,
     thumbnails : String
      }] ,
+    score : [ {
+    id : String,
+    link : String,
+    title : String,
+    description : String,
+    thumbnails : String
+     }] ,
 
 	created_at		: String,
 	temp_password	: String,
