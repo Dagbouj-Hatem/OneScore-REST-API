@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true, limit: '5mb'  }));
 app.use(logger('dev'));
 
-require('./routes')(router);
+require('./routes')(router); 
 app.use('/api/v1', router);
 
 app.listen(port);

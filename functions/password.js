@@ -28,13 +28,13 @@ exports.changePassword = (email, password, newPassword) =>
 
 			} else {
 
-				reject({ status: 401, message: 'Invalid Old Password !' });
+				reject({ status: 401, message: 'Invalid old password!' });
 			}
 		})
 
-		.then(user => resolve({ status: 200, message: 'Password Updated Sucessfully !' }))
+		.then(user => resolve({ status: 200, message: 'Password updated sucessfully.' }))
 
-		.catch(err => reject({ status: 500, message: 'Internal Server Error !' }));
+		.catch(err => reject({ status: 500, message: 'Internal server error!' }));
 
 	});
 
@@ -50,7 +50,7 @@ exports.resetPasswordInit = email =>
 
 			if (users.length == 0) {
 
-				reject({ status: 404, message: 'User Not Found !' });
+				reject({ status: 404, message: 'Couldn\'t find your onescore account!' });
 
 			} else {
 
@@ -75,7 +75,7 @@ exports.resetPasswordInit = email =>
 from: `"${config.name}" <${config.email}>`,
 to: email,  
 subject: 'Reset Password Request', 
-html: `<pre>Hello ${user.name},
+html: `<pre style="font-family:Arial,sans-serif">Hello ${user.name},
 
 Your reset password token is <b>${random}</b>. The token is valid for only 10 minutes.
 
@@ -91,13 +91,13 @@ OneScore Team.</pre>`
 		.then(info => {
 
 			console.log(info);
-			resolve({ status: 200, message: 'Check mail for instructions' })
+			resolve({ status: 200, message: 'Check email for instructions.' })
 		})
 
 		.catch(err => {
 
 			console.log(err);
-			reject({ status: 500, message: 'Internal Server Error !' });
+			reject({ status: 500, message: 'Internal server error!' });
 
 		});
 	});
@@ -117,7 +117,7 @@ exports.resetPasswordFinish = (email, token, password) =>
 			console.log(`Seconds : ${seconds}`);
 
 			if (seconds < 600) { return user; }
-		    else { reject({ status: 401, message: 'Time Out ! Try again .' }); } })
+		    else { reject({ status: 401, message: 'Time out! try again.' }); } })
 		    .then(user => {
 
 			if (bcrypt.compareSync(token, user.temp_password)) {
@@ -132,12 +132,12 @@ exports.resetPasswordFinish = (email, token, password) =>
 
 			} else {
 
-				reject({ status: 401, message: 'Invalid Token !' });
+				reject({ status: 401, message: 'Invalid token!' });
 			}
 		})
 
-		.then(user => resolve({ status: 200, message: 'Password Changed Successfully !' }))
+		.then(user => resolve({ status: 200, message: 'Password changed successfully!' }))
 
-		.catch(err => reject({ status: 500, message: 'Internal Server Error !' }));
+		.catch(err => reject({ status: 500, message: 'Internal server error!' }));
 
 	});

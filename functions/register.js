@@ -34,7 +34,7 @@ const mailOptions = {
 from: `"${config.name}" <${config.email}>`,
 to: email,  
 subject: 'Sign up confirmation', 
-html: `<pre>Hello ${newUser.name},
+html: `<pre style="font-family:Arial,sans-serif">Hello ${newUser.name},
 
 Thank you for signing up for OneScore! Soon you'll get access to an infinite world of sheet music, where you can purchase the transcription of any song or track you want.
 
@@ -53,17 +53,17 @@ OneScore Team.</pre>`
 //*************************************************************************
 //*************************************************************************
 
-		.then(() => resolve({ status: 201, message: 'User Registered Sucessfully !' }))
+		.then(() => resolve({ status: 201, message: 'You’ve been successfully registered.' }))
 
 		.catch(err => {
 
 			if (err.code == 11000) {
 
-				reject({ status: 409, message: 'User Already Registered !' });
+				reject({ status: 409, message: 'You’re already registered!' });
 
 			} else {
 
-				reject({ status: 500, message: 'Internal Server Error !' });
+				reject({ status: 500, message: 'Internal server error!' });
 			}
 		});
 	});

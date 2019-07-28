@@ -49,5 +49,5 @@ const userSchema = mongoose.Schema({
 });
 
 mongoose.Promise = global.Promise; 
-mongoose.connect('mongodb://7b0d56b99a1200fb152dc1036fb3ef9d:onescore123@6a.mongo.evennode.com:27017,6b.mongo.evennode.com:27017/7b0d56b99a1200fb152dc1036fb3ef9d?replicaSet=eu-6' , { useMongoClient: true });
+mongoose.connect('mongodb://efc86f9ac69a0a7f752d44be2696e6a8:onescore123@9a.mongo.evennode.com:27017,9b.mongo.evennode.com:27017/efc86f9ac69a0a7f752d44be2696e6a8?replicaSet=eu-9' , { useMongoClient: true });
 module.exports = mongoose.model('user', userSchema); 

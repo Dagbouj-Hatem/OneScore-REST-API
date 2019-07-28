@@ -47,7 +47,7 @@ const mailOptions = {
 from: `"${config.name}" <${config.email}>`,
 to: email,  
 subject: 'Your order', 
-html: `<pre>Hello ${user.name},
+html: `<pre style="font-family:Arial,sans-serif">Hello ${user.name},
 
 You will recieve your ordered score in a few days. 
 
@@ -61,9 +61,9 @@ OneScore Team.</pre>`
 })
 //*************************************************************************
 //*************************************************************************
-		.then(user => resolve({ status: 200, message: 'Order request saved successfully , check mail for more informations' }))
+		.then(user => resolve({ status: 200, message: 'Your request have been saved.' }))
 
-		.catch(err => reject({ status: 500, message: 'Internal Server Error !' }));
+		.catch(err => reject({ status: 500, message: 'Internal server error!' }));
 
 	});
 
@@ -74,9 +74,9 @@ exports.delete = (email , id ) =>
 
 		user.update({ email: email }, { $pull: { order : { id : id } } }, { safe: true }) 
 
-		.then(user => resolve({ status: 200, message: 'delete successfully  !' }))
+		.then(user => resolve({ status: 200, message: 'delete successfully.' }))
 
-		.catch(err => reject({ status: 500, message: 'Internal Server Error !' }));
+		.catch(err => reject({ status: 500, message: 'Internal server error!' }));
 
 });
 
@@ -103,8 +103,74 @@ exports.accept = (email , id ,link,title,description,thumbnails) =>
 		// delete from order 
 		user.update({ email: email }, { $pull: { order : { id : id } } }, { safe: true })
 
-		.then(user => resolve({ status: 200, message: 'delete successfully  !' }))
+		.then(user => resolve({ status: 200, message: 'Request added to transcription list.' }))
 
-		.catch(err => reject({ status: 500, message: 'Internal Server Error !' }));
+		.catch(err => reject({ status: 500, message: 'Internal server error!' }));
 
 });
+
+exports.allOrder = (email) => 
+
+	new Promise((resolve, reject) => { 
+		// delete from order 
+		user.find({ email: email }, { order: 1 , _id: 0})
+		.then(users => resolve(users[0].order))
+
+		.catch(err => reject({ status: 500, message: 'Internal server error!' }));
+
+});
+
+exports.allScore= (email) => 
+
+	new Promise((resolve, reject) => { 
+		// delete from score 
+		user.find({ email: email }, { score: 1 , _id: 0})
+		.then(users => resolve(users[0].score))
+
+		.catch(err => reject({ status: 500, message: 'Internal server error!' }));
+
+});
+
+exports.bayScore= (email, link)=>
+	new Promise((resolve, reject) => { 
+		// delete from score 
+		user.find({ email: email })
+		.then(users => {
+			const  user = users[0]; 
+			return user;
+		})
+//**************************************************************************
+//**************************************************************************
+// sent mail to user 
+.then((user) => {
+
+const transporter = nodemailer.createTransport(`smtps://${config.email}:${config.password}@smtp.gmail.com`);
+
+const mailOptions = {
+
+from: `"${config.name}" <${config.email}>`,
+to: email,  
+subject: 'Your purchase', 
+html: `<pre style="font-family:Arial,sans-serif">Hello ${user.name},
+
+Thank you for your purchase. Attached to this email is your score file.
+
+Best,
+OneScore Team.</pre>
+<img src='http://onescore.eu-4.evennode.com/api/v1/image/${link}' >
+
+`
+
+};
+
+	return transporter.sendMail(mailOptions);
+
+})
+//*************************************************************************
+//*************************************************************************
+		.then(user => resolve({ status: 200, message: 'Please check your email.' }))
+
+		.catch(err => reject({ status: 500, message: 'Internal server error!' }));
+
+	});
+

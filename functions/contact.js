@@ -14,7 +14,7 @@ exports.contact = (email, subject , message ) =>
 
 			if (users.length == 0) {
 
-				reject({ status: 404, message: 'User Not Found !' });
+				reject({ status: 404, message: 'Couldn\'t find your onescore account!' });
 
 			} else {
 
@@ -33,7 +33,7 @@ const mailOptions1 = {
 from: `"${config.name}" <${config.email}>`,
 to: email,  
 subject: 'OneScore support' , 
-html: `<pre>Hello ${user.name},
+html: `<pre style="font-family:Arial,sans-serif">Hello ${user.name},
 
 Thank you for contacting us, we'll reply soon to your inquiry.
 
@@ -54,7 +54,7 @@ const mailOptions = {
 from: `"${config.name}" <${config.email}>`,
 to: 'info.onescore@gmail.com',  
 subject: subject , 
-html: `<pre>${ message }</pre><br><br>Message from :<i>${email}</i>`
+html: `<pre style="font-family:Arial,sans-serif">${ message }</pre><br><br style="font-family:Arial,sans-serif">Message from :<i>${email}</i>`
 
 };
 
@@ -63,9 +63,9 @@ html: `<pre>${ message }</pre><br><br>Message from :<i>${email}</i>`
 })	
 //*************************************************************************
 //*************************************************************************
-		.then(() => resolve({ status: 200, message: 'Thank you for getting in touch' }))
+		.then(() => resolve({ status: 200, message: 'Thank you for getting in touch.' }))
 
-		.catch(err => reject({ status: 500, message: 'Internal Server Error !' }));
+		.catch(err => reject({ status: 500, message: 'Internal server error!' }));
 
 	});
  

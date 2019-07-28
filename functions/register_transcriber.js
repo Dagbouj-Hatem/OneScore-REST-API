@@ -41,7 +41,7 @@ const mailOptions = {
 from: `"${config.name}" <${config.email}>`,
 to: email,  
 subject: 'Welcome to our community!', 
-html: `<pre>Hello ${user.name},
+html: `<pre style="font-family:Arial,sans-serif">Hello ${user.name},
 
 Thank you for joining our community as a transcriber/proffreader. As a first step, you'll need to apply to our basic music transcription test that you find on your OneScore app, 'My tests'.
 
@@ -55,8 +55,8 @@ OneScore Team.</pre>`
 })
 //*************************************************************************
 //*************************************************************************
-		.then(user => resolve({ status: 200, message: 'You have successfully registered !' }))
+		.then(user => resolve({ status: 200, message: 'You have successfully registered!' }))
 
-		.catch(err => reject({ status: 500, message: 'Internal Server Error !' }));
+		.catch(err => reject({ status: 500, message: 'Internal server error!' }));
 
 	});
